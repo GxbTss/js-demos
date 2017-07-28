@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模拟滚动条</title>
+    <link rel="stylesheet" type="text/css" href="custom-bar.css" />
+    <style type="text/css">
+        body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td{margin:0;padding:0;}html{font-size: 12px;}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;}table{border-collapse:collapse;border-spacing:0;}q:before,q:after{content:'';}object,embed{vertical-align:top;}hr,legend{display:none;}img,abbr,acronym,fieldset{border:0;}ul li{list-style-type:none;}a,label{cursor:pointer;}img{vertical-align:bottom;margin:0;padding:0;}a{text-decoration:none;outline: none;}.clearfix:after{content: "."; visibility: hidden; display: block; height: 0.1px; font-size:0.1em; line-height: 0; clear: both;}.clearfix {*zoom:1;}input ,textarea,select{outline: none;border:1px solid #bfbfbf;}th{font-weight: 400;}
+button{cursor: pointer;border:none;outline: none;}textarea{border: 1px solid #ccc;resize: none;outline: none;overflow: hidden;padding: 5px;}select{outline: none;}.text_overflow{overflow:hidden;white-space: nowrap;
+text-overflow: ellipsis;}
+html {
+    font-family: "Microsoft YaHei",tahoma,arial,"Hiragino Sans GB","\5b8b\4f53",sans-serif;
+    font-size:14px;
+    color: #5c5d5e;
+    -webkit-font-smoothing: antialiased; /*chrome、safari*/
+    -moz-osx-font-smoothing: grayscale;/*firefox*/
+}
+.bar-wrap {
+    width:200px;
+    height:400px;
+    background:#000;
+    overflow:hidden;
+    position:relative;
+}
+.bar-wrap .content-subject {
+    position:relative;
+    left:0;
+    top:0;
+    float:left;
+}
+.bar-wrap .scroll-box-x {
+    position:relative;
+    position: absolute;
+    bottom: 0; 
+    width:100% ;
+    height:8px; 
+    background: #333; 
+}
+.bar-wrap .scroll-bar-x {
+    position:absolute; 
+    left:0; 
+    top:0; 
+    width:30px;
+    height:100%; 
+    border-radius: 6px;
+    background:red; 
+    cursor: default;
+}
+.bar-wrap .scroll-box-y { 
+    position:relative;
+    float:right; 
+    width:8px; 
+    height:100%; 
+    background: #333; 
+}
+.bar-wrap .scroll-bar-y {
+    position:absolute; 
+    left:0; 
+    top:0; 
+    width:100%;
+    height:30px; 
+    border-radius: 6px;
+    background:red; 
+    cursor: default;
+}
+
+
+        .prompt-explain {
+            margin-bottom: 50px;
+            border: 2px dotted blue;
+            line-height: 1.5;
+            padding: 10px;
+        }
+        body {
+            padding: 50px;
+        }
+        .bar-wrap .test li {
+            width: 800px;
+            height: 200px;
+        }
+        .bar-wrap .test1 li {
+            width: 800px;
+            height: 20px;
+        }
+        .bar-wrap .test2 li {
+            width: 200px;
+            height: 200px;
+        }
+        .bar-wrap .test li:nth-child(odd) {
+            background-color: blue;
+        }
+        .bar-wrap .test1 li:nth-child(odd) {
+            background-color:pink;
+        }
+        .bar-wrap .test2 li:nth-child(odd) {
+            background-color:red;
+        }
+        .bar-wrap1 {
+            margin: 50px;
+            width:300px;
+            height:300px;
+            background:#000;
+            overflow:hidden;
+            position:relative;
+        }
+        .bar-wrap1 .test li:nth-child(odd) {
+            background-color: orange;
+        }
+        .bar-wrap .scroll-box1 {
+            position:relative;
+            float:right; 
+            width:10px; 
+            height:100%; 
+            background: yellow; 
+        }
+        .bar-wrap .scroll-bar1 {
+            position:absolute; 
+            left:0; 
+            top:0; 
+            width:100%;
+            height:30px; 
+            border-radius: 6px;
+            background: linear-gradient(pink, red);
+            cursor: default;
+        }  
+        .bar-wrap .scroll-box2 { 
+            position:relative;
+            position: absolute;
+            bottom: 0; 
+            width:100% ;
+            height:8px; 
+            background: yellow; 
+        }
+        .bar-wrap .scroll-bar2 {
+            position:absolute; 
+            left:0; 
+            top:0; 
+            width:100%;
+            height:100%; 
+            border-radius: 6px;
+            background: linear-gradient(to right,#000, #fff);
+            cursor: default;
+        }  
+
+        .bar-wrap .scroll-box3 {  
+            position:relative;
+            float:right; 
+            width:10px; 
+            height:100%; 
+            background: #878; 
+        }
+        .bar-wrap .scroll-bar3 {
+            position:absolute; 
+            left:0; 
+            top:0; 
+            width:100%;
+            height:30px; 
+            border-radius: 6px;
+            background: linear-gradient(pink, red);
+            cursor: default;
+        }  
+    </style>
+</head>
+<body>
+    <div class="prompt-explain">
+        <dl>
+            <dt>自定义滚动条组件说明:</dt>
+            <dd>
+                <p>作用：该组件用于模拟系统滚动条</p>
+                <p>依赖:依赖custom-bar.css</p>
+                <div>
+                    <p>参数：var cus = new CustomBar(custom, {
+            scrollBarTypeX : 'scroll-bar2',
+            scrollBoxTypeX : 'scroll-box2',
+            scrollBarTypeY : 'scroll-bar1',
+            scrollBoxTypeY : 'scroll-box1',
+        });</p>
+                    <p>1.obj:整个组件要绑定的dom节点（必须）</p>
+                    <p>2.scrollBarTypeX:横向滚动条的样式（可选，写法要参考custom-bar.css里面的默认写法）</p>
+                    <p>3.scrollBoxTypeX:横向滚动条底部的样式（可选，写法要参考custom-bar.css里面的默认写法）</p>
+                    <p>4.scrollBarTypeY:轴向滚动条的样式（可选，写法要参考custom-bar.css里面的默认写法）</p>
+                    <p>5.scrollBoxTypeY:纵向滚动条底部的样式（可选，写法要参考custom-bar.css里面的默认写法）</p>
+                </div>
+                <p>兼容：IE8+</p>
+            </dd>
+        </dl>
+    </div>
+    <div class="bar-wrap">
+        <div class="content-subject">
+            <!-- 这里写内容开始-->
+            <ul class="test">
+                <li>5675787667858765786576578657865</li>
+                <li>5765567576576576567567567587657685678576857685765</li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+            <!-- 这里写内容结束-->
+        </div>
+        <div class="scroll-box-x">
+            <div class="scroll-bar-x"></div>
+        </div>
+        <div class="scroll-box-y">
+            <div class="scroll-bar-y"></div>
+        </div>
+    </div>
+
+    <div class="bar-wrap bar-wrap1">
+        <div class="content-subject">
+            这里写内容756675765765
+            <ul class="test1">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+        <div class="scroll-box-x">
+            <div class="scroll-bar-x"></div>
+        </div>
+        <div class="scroll-box-y">
+            <div class="scroll-bar-y"></div>
+        </div>
+    </div>
+
+    <div class="bar-wrap bar-wrap2">
+        <div class="content-subject">
+            这里写内容756675765765
+            <ul class="test2">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+        <div class="scroll-box-x">
+            <div class="scroll-bar-x"></div>
+        </div>
+        <div class="scroll-box-y">
+            <div class="scroll-bar-y"></div>
+        </div>
+    </div>
+<script>
+;(function(win, doc) {
+    function CustomBar(obj, options) {
+        this.barWrap = obj;
+        this.contenSubject = obj.querySelector('.content-subject');
+        this.scrollBoxX = obj.querySelector('.scroll-box-x');
+        this.scrollBarX = obj.querySelector('.scroll-bar-x');
+        this.scrollBoxY = obj.querySelector('.scroll-box-y');
+        this.scrollBarY = obj.querySelector('.scroll-bar-y');
+        this.scaleX = 1;
+        this.scaleY = 1;
+        this.width = null;
+        this.height = null;
+        this.left = 0;
+        this.top = 0;
+        this.maxTop = 0;
+        this.maxLeft = 0;
+        options = options || {};
+        this.init(options);
+    }
+    CustomBar.prototype = {
+        constructor: CustomBar,
+        init : function(options) {
+            this.scaleX = this.barWrap.clientWidth / this.contenSubject.scrollWidth;
+            this.scaleY = this.barWrap.clientHeight  / this.contenSubject.scrollHeight;
+            if( this.scaleX>=1 ) {
+                this.scaleX = 1;
+                this.scrollBoxX.style.display = 'none';
+            } else {
+                this.scrollBarX.className += ' ' + (options.scrollBarTypeX ? options.scrollBarTypeX :'');
+                this.scrollBoxX.className += ' ' + (options.scrollBoxTypeX ? options.scrollBoxTypeX : '');
+                this.contenSubject.style.height = this.barWrap.offsetHeight - this.scrollBoxX.offsetHeight + 'px';
+                this.width = this.barWrap.clientWidth * this.scaleX;
+                this.maxLeft = this.scrollBoxX.scrollWidth - this.width;
+                this.scrollBarX.style.width = this.width + 'px';
+                this.eventBindX();
+            }
+            if( this.scaleY>=1 ) {
+                this.scaleY = 1;
+                this.scrollBoxY.style.display = 'none';
+            } else {
+                this.scrollBarY.className += (options.scrollBarTypeY ? ' ' + options.scrollBarTypeY :'');
+                this.scrollBoxY.className += (options.scrollBoxTypeY ? ' ' + options.scrollBoxTypeY : '');
+                this.contenSubject.style.width = this.barWrap.offsetWidth - this.scrollBoxY.offsetWidth + 'px';
+                this.height = this.barWrap.clientHeight * this.scaleY;
+                this.maxTop = this.scrollBoxY.scrollHeight - this.height;
+                this.scrollBarY.style.height = this.height + 'px';
+                this.eventBindY();
+            }
+        },
+        eventBindX : function() {
+            var oThis = this;
+            this.scrollBarX.onmousedown = function(event) {
+                var event = event || win.event,
+                    orginX = event.clientX - this.offsetLeft;
+                doc.onmousemove = function(event) {
+                    var event = event || win.event;
+                    win.event ? win.event.returnValue = false : event.preventDefault();
+                    oThis.left = event.clientX - orginX;
+                    oThis.left = Math.max(0, Math.min(oThis.maxLeft, oThis.left));
+                    oThis.contenScrollX();
+                };
+                doc.onmouseup = function() {
+                    doc.onmouseup = doc.onmousemove = null;
+                };
+            };
+            this.barWrap.onmousewheel = function(event) {
+                oThis.wheelEvent();
+            };
+            if( navigator.userAgent.indexOf("Firefox")>0 ) {
+                this.barWrap.addEventListener('DOMMouseScroll', function(event){
+                    oThis.wheelEvent(event);
+                }, false);
+            }
+        },
+        eventBindY : function() {
+            var oThis = this;
+            this.scrollBarY.onmousedown = function(event) {
+                var event = event || win.event,
+                    orginY = event.clientY - this.offsetTop;
+                doc.onmousemove = function(event) {
+                    var event = event || win.event;
+                    win.event ? win.event.returnValue = false : event.preventDefault();
+                    oThis.top = event.clientY - orginY;
+                    oThis.top = Math.max(0, Math.min(oThis.maxTop, oThis.top));
+                    oThis.contenScrollY();
+                };
+                doc.onmouseup = function() {
+                    doc.onmouseup = doc.onmousemove = null;
+                };
+            };
+            this.barWrap.onmousewheel = function(event) {
+                oThis.wheelEvent();
+            };
+            if( navigator.userAgent.indexOf("Firefox")>0 ) {
+                this.barWrap.addEventListener('DOMMouseScroll', function(event){
+                    oThis.wheelEvent(event);
+                }, false);
+            }
+        },
+        wheelEvent : function(event) {
+            var oThis = this,
+                event = event || window.event,
+                wheel = event.wheelDelta || event.detail,
+                isDown = true;
+            win.event ? win.event.returnValue = false : event.preventDefault();
+            event.wheelDelta ? (isDown = wheel<0 ? true : false) : (isDown = wheel>0 ? true : false);
+            isDown ? oThis.top+=10 : oThis.top-=10;
+            oThis.contenScrollY();
+        },
+        contenScrollX : function() {
+            this.left = Math.max(0, Math.min(this.maxLeft, this.left));
+            this.scrollBarX.style.left = this.left + 'px';
+            this.contenSubject.style.left = - this.left / this.scaleX+ 'px';
+        },
+        contenScrollY : function() {
+            this.top = Math.max(0, Math.min(this.maxTop, this.top));
+            this.scrollBarY.style.top = this.top + 'px';
+            this.contenSubject.style.top = - this.top / this.scaleY+ 'px';
+        }
+    };
+    win.CustomBar  = CustomBar;
+})(window, document);
+</script>
+<script>
+    var custom = document.querySelector('.bar-wrap');
+    new CustomBar(custom);
+
+    var custom = document.querySelector('.bar-wrap1');
+    var cus = new CustomBar(custom, {
+        scrollBarTypeX : 'scroll-bar2',
+        scrollBoxTypeX : 'scroll-box2',
+        scrollBarTypeY : 'scroll-bar1',
+        scrollBoxTypeY : 'scroll-box1',
+    });
+
+    var custom = document.querySelector('.bar-wrap2');
+    var cus = new CustomBar(custom, {
+        scrollBarTypeY : 'scroll-bar3',
+        scrollBoxTypeY : 'scroll-box3',
+    });
+</script>
+</body>
+</html>
