@@ -136,9 +136,11 @@ address.prototype = {
 	changCity : function(oThis, that, index1, index2) {
 		var index = index ,// 选中索引
 			oFrag = document.createDocumentFragment();
-		oThis.area.innerHTML = '';
 		oThis.calCity(oThis, index2, index1);
-		oThis.cal(oFrag, oThis.areaList, oThis.area);
+		if ( oThis.area ) {
+			oThis.area.innerHTML = '';
+			oThis.cal(oFrag, oThis.areaList, oThis.area);
+		}
 	}
 };
 
