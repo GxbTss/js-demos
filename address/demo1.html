@@ -86,6 +86,7 @@ address.prototype = {
 	initPro : function() {
 		var oFrag = document.createDocumentFragment();
 		this.proList = provinceList;
+		this.pro.innerHTML = '';
 		this.cal(oFrag, this.proList, this.pro);
 		this.pro.value = this.defaultPro;
 	},
@@ -95,6 +96,7 @@ address.prototype = {
 		var index = this.pro.selectedIndex,
 			oThis = this,
 			oFrag = document.createDocumentFragment();
+		this.city.innerHTML = '';
 		this.cityList = provinceList[index]['cityList'];
 		if ( this.isCentral() ) {
 			this.cityList = [{
@@ -110,6 +112,7 @@ address.prototype = {
 		var index = this.pro.selectedIndex,
 			oThis = this,
 			oFrag = document.createDocumentFragment();
+		this.area.innerHTML = '';
 		this.calCity(oThis, index, 0);
 		this.cal(oFrag, this.areaList, this.area);
 		this.area.value = this.defaultArea;
@@ -152,7 +155,6 @@ new address({
 	defaultCity : '杭州市',
 	defaultArea : '淳安县',
 });
-
 
 new address({
 	pro : document.querySelector('#pro1'),
