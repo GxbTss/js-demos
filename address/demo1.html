@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>address</title>
+</head>
+<body>
+<div>
+	<select id="pro"></select>
+	<select id="city"></select>
+	<select id="area"></select>
+</div>
+<script src="address.js"></script>
+<script>
+
+function address(options) {
+	this.pro = options.pro;
+	this.city = options.city;
+	this.area = options.area;
+	this.defaultPro = options.defaultPro || '北京市';
+	this.defaultCity = options.defaultCity || '东城区';
+	this.defaultArea = options.defaultArea || '东城区';
+	this.proList = [];
+	this.cityList = [];
+	this.areaList = [];
+	this.init();
+}
+
+address.prototype = {
+
+	init : function() {
+		var oThis = this;
+		this.initPro();
+		this.initCity();
+		this.initArea();
+		this.pro.onchange = function() {
+			oThis.changPro(oThis, this);
+		};
+		this.city.onchange = function() {
+			var index = this.selectedIndex;
+			oThis.changCity(oThis, this, index);
+		};
+	},
+
+	everyInit : function(arr, list, dom) {
+		var oThis = this,
+			oFrag = document.createDocumentFragment();
+		arr.forEach(function( item, index, arrr ) {
+			list.push(item.name);
+			var option = document.createElement("option");
+			option.innerHTML = item.name;
+			oFrag.appendChild(option);
+		});
+		dom.appendChild(oFrag);
+	},
+
+	everyEach : function(arr, oFrag) {
+		arr.forEach(function( item, index, arrr ) {
+			var option = document.createElement("option");
+			option.innerHTML = item.name || item;
+			oFrag.appendChild(option);
+		});
+	},
+
+	// 初始化省
+	initPro : function() {
+		this.everyInit( provinceList, this.proList, this.pro );
+		this.pro.value = this.defaultPro;
+	},
+
+	// 市初始化
+	initCity : function() {
+		var index = this.pro.selectedIndex;
+		this.cityList = provinceList[index]['cityList'];
+		this.everyInit( provinceList[index]['cityList'], this.cityList, this.city );
+		this.city.value = this.defaultCity;
+	},
+
+	// 初始化区
+	initArea : function() {
+		var oThis = this,
+			oFrag = document.createDocumentFragment();
+		if ( this.cityList[0]['areaList'] != undefined ) {
+			this.areaList = this.cityList[0]['areaList'];
+			this.everyEach( this.areaList, oFrag );
+		} else {
+			var option = document.createElement("option");
+				option.innerHTML = provinceList[0]['cityList'][0]['name'];
+				oFrag.appendChild(option);
+		}
+		area.appendChild(oFrag);
+		this.area.value = this.defaultArea;
+	},
+
+	// 改变省
+	changPro : function(oThis, that) {
+		var index =	that.selectedIndex, // 选中索引
+			oFrag = document.createDocumentFragment();
+		oThis.city.innerHTML = '';
+		oThis.cityList = provinceList[index]['cityList'];
+		oThis.everyEach( oThis.cityList, oFrag);
+		oThis.city.appendChild(oFrag);
+		this.changCity(oThis, that, 0);
+	},
+
+	// 改变市
+	changCity : function(oThis, that, index) {
+		var index = index ,// 选中索引
+			oFrag = document.createDocumentFragment();
+		oThis.area.innerHTML = '';
+		if ( oThis.cityList[index]['areaList'] != undefined ) {
+			oThis.areaList = oThis.cityList[index]['areaList'];
+			oThis.everyEach( oThis.areaList, oFrag);
+		} else {
+			var option = document.createElement("option");
+			option.innerHTML = oThis.cityList[index]['name'];
+			oFrag.appendChild(option);
+		}
+		oThis.area.appendChild(oFrag);
+	}
+};
+
+new address({
+	pro : document.querySelector('#pro'),
+	city : document.querySelector('#city'),
+	area : document.querySelector('#area'),
+	defaultPro : '浙江省',
+	defaultCity : '杭州市',
+	defaultArea : '淳安县',
+});
+</script>
+</body>
+</html>
