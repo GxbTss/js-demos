@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>图片上传</title>
+<style type="text/css">
+* {
+    padding: 0;
+    margin: 0;
+}
+.pic-box {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    line-height: 200px;
+    overflow:hidden;
+    text-align: center;
+    background: #ccc;
+    border: 1px solid #000;
+}
+.upload-pic {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+.img-box {
+    position: absolute;
+    z-index: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+</style>
+</head>
+<body>
+<div class="pic-box"> 
+   <label class="tips">+上传身份证正面</label> 
+   <img src="" class="img-box" id="img">
+   <input type="file" id="file" class="upload-pic" /> 
+</div>  
+<div class=""></div>
+<script src="https://cdn.bootcss.com/jquery/1.11.1/jquery.js"></script> 
+<script>
+
+;(function(win, doc) {
+    function UploadPic(options, cb) {
+        this.imgBox = options.imgBox;
+        this.file = options.file;
+        this.maxSize = options.maxSize || 300*1024;
+        this.ratio = options.ratio || .5;
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.reg = /image\/\w+/;
+        this.cb = cb || function() {};
+        this.init();
+    }
+    UploadPic.prototype = {
+        init : function(options) {
+            var oThis = this;
+            if( typeof FileReader==='undefined' ) { 
+                this.imgBox.innerHTML = "抱歉，你的浏览器不支持 FileReader"; 
+                this.file.setAttribute('disabled','disabled'); 
+            } else { 
+                this.file.addEventListener('change', oThis.readFile.bind(this), false); 
+            } 
+        },
+        readFile : function(event) {
+            var file = this.file.files[0],
+                oThis = this;
+                console.log(this);
+            if ( !oThis.reg.test(file.type) ) { 
+                alert("文件必须为图片！"); 
+                return; 
+            } 
+            var reader = new FileReader();
+            reader.readAsDataURL(file); 
+            reader.onload = function(e) { 
+                var img = new Image(),
+                    length = this.result.length,
+                    result = this.result;
+                img.src = result;
+                img.onload = function () {
+                    if ( length > oThis.maxSize ) {
+                        result = oThis.compress(img);
+                    } 
+                    oThis.imgBox.src = result;
+                    oThis.cb(result);
+                };
+            } 
+        },
+        compress : function(img) {
+            var width = img.width,
+                height = img.height,
+                data = null;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, width, height);
+            data = canvas.toDataURL('image/jpeg', this.ratio);
+            return data;
+        }
+    }
+    win.UploadPic = UploadPic;
+})(window, document);
+
+new UploadPic({
+    imgBox : document.getElementById("img"),
+    file : document.getElementById("file")
+}, function(imgSrc) {
+    $.ajax({
+        url : "",
+        dataType : "json",
+        data : {
+            imgStr : imgSrc
+        },
+        type :  "post",
+        success : function(data) {
+            console.log(data);
+            if(data.success==true) {
+                $("#headUrl").attr("src", data.url);
+                headUrl = data.url;
+            } else {
+                if(data.message=="000000017") {
+                    $.diyAlert({
+                        msg : '图片大小超过限制'
+                    });
+                } else if (data.message=="000000018") {
+                    $.diyAlert({
+                        msg : '图片格式不正确'
+                    });
+                }
+            }
+        }
+    });
+});
+</script>
+</body>
+</html>
