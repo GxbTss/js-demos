@@ -31,6 +31,7 @@
     width: 33.33%;
     border-right: 1px solid #d1d6e4;
     text-align: center;
+    cursor: pointer;
 }
 .quantity-selector .number {
     float: left;
@@ -46,6 +47,7 @@
     border-right: none;
 }
 .quantity-selector  .disable {
+    cursor: not-allowed;
     color: #d2d2d2;
 }
 </style>
@@ -62,7 +64,7 @@
 <p>初始数量为5，库存为5</p>
 <div class="quantity-selector clearfix">
     <span class="reduce">－</span>
-    <input type="number" value="5" class="number" data-account="5" />
+    <input type="number" value="10" class="number" data-account="5" />
     <span class="add">＋</span>
 </div>
 
@@ -75,17 +77,18 @@
 <script src="https://cdn.bootcss.com/jquery/1.2.3/jquery.min.js"></script>
 <script>
 (function($) {
-    $.fn.numContrl = function(options) {
+    $.fn.numContrl = function(opt) {
         return this.each(function() {
             var dft = {
-                disable : 'disable'
+                disable : 'disable',
+                realStock : null
             },
-                options = $.extend(dft, options),
+                options = $.extend(dft, opt),
                 oThis = $(this),
                 numReduce = oThis.find('.reduce'),
                 numAdd = oThis.find('.add'),
                 num = oThis.find('.number'),
-                dataMaxNum = parseInt(num.attr('data-account')),
+                dataMaxNum =  options.realStock || parseInt(num.attr('data-account')),
                 reg1 = /^\d*$/,
                 reg2 = /^0/;
             oThis.value = function() {
@@ -96,7 +99,7 @@
                     num.val(1);
                 }
                 if ( num.val() > dataMaxNum ) {
-                    num.val(num.val().slice(0 , -1));
+                    num.val( dataMaxNum );
                 }
                 num.blur(function() {
                     if( $(this).val() === '' ) {
@@ -140,7 +143,9 @@
         });
     }
 })($);
-$('.quantity-selector').numContrl();
+$('.quantity-selector').numContrl({
+    realStock : 10
+});
 </script> 
 </body>
 </html>
