@@ -21,7 +21,7 @@
 }
 .quantity-selector {
     width: 8.571rem;
-    line-height: 2.857rem;
+    line-height: 2.9rem;
     border: 1px solid #d1d6e4;
     border-radius: 3px;
 }
@@ -106,30 +106,30 @@
                         num.val(1);
                     }
                 });
-                numAdd.removeClass(options.disable);
-                numReduce.removeClass(options.disable);
+                numAdd.removeClass( options.disable );
+                numReduce.removeClass( options.disable );
                 if ( num.val() == 1 ) {
-                    numReduce.addClass(options.disable);
+                    numReduce.addClass( options.disable );
                 }
-                if( num.val() == dataMaxNum ) {
-                    numAdd.addClass(options.disable);
+                if ( num.val() == dataMaxNum ) {
+                    numAdd.addClass( options.disable );
                 }
                 oThis.value();
             };
             oThis.change();
             numReduce.click(function() {
-                if($(this).hasClass(options.disable)) {
+                if ( $(this).hasClass(options.disable) ) {
                     return;
                 } else {
-                    num.val(parseInt(num.val()) - 1);
+                    num.val( parseInt(num.val()) - 1 );
                     oThis.change();
                 }
             });
             numAdd.click(function() {
-                if($(this).hasClass(options.disable)) {
+                if ( $(this).hasClass(options.disable) ) {
                     return;
                 } else {
-                    num.val(parseInt(num.val()) + 1);
+                    num.val( parseInt(num.val()) + 1 );
                     oThis.change();
                 }
             });
